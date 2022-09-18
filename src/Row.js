@@ -6,18 +6,28 @@ import movieTrailer from "movie-trailer";
 
 const base_url = "https://image.tmdb.org/t/p/original";
 
-function Row({ title, fetchUrl, isLargeRow }) {
+const sleep = (timeMs) => {
+  return new Promise((resolve) => { setTimeout(resolve, timeMs) })
+}
+
+function Row({ title, fetchUrl, isLargeRow, delay }) {
   const [movies, setMovies] = useState([]);
   const [trailerUrl, setTrailerUrl] = useState();
 
   useEffect(() => {
+    async function delayFetch() {
+      await sleep(delay);
+    }
+
     async function fetchData() {
       const request = await axios.get(fetchUrl);
+      console.log('request status', request);
       setMovies(request.data.results);
       return request;
     }
+    delayFetch();
     fetchData();
-  }, [fetchUrl]);
+  }, [fetchUrl, delay]);
 
   const opts = {
     height: "390",
